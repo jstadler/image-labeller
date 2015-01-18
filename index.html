@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+     
+    <head>
+        <title>
+        	Image Labeller
+        </title>
+        <style>
+        	@font-face {
+  				font-family: 'Impact';
+  				src: url('font/Impact Label.ttf');
+			}
+        </style>
+    </head>
+     
+    <body>
+    	<div style="float:left;">
+	    <canvas id="canvasuses" width="612" height="612" style="border:solid 1px black;">
+    		<p>Your browser does not support the HTML5 canvas element.</p>
+    	</canvas>
+    	</div>
+
+    	<div style="float:left;">
+    	<button>Upload Image</button><br /><br />
+    	<input></input><br /><br />
+    	<button>Save</button>
+    	</div>
+
+    	<script type="text/javascript">
+        	 
+        	var c=document.getElementById("canvasuses");
+        	var canvOK=1;
+        	try {c.getContext("2d");}
+        	catch (er) {canvOK=0;}
+
+        	if (canvOK==1){
+        		// main image
+        		// top padding 102
+        		// rect 612x408
+        		// bottom padding 102
+        	    var ctx=c.getContext("2d");
+
+        	    // backround
+        	    ctx.fillStyle = 'white';
+				ctx.fillRect(0, 0, 612, 612);
+
+        	    var imageObj = new Image();
+        	    imageObj.src = 'img/0016.jpg';
+
+        		ctx.drawImage(imageObj, 0, 102, 612, 408);
+      			
+      			
+        	    //ctx.fillStyle="red";
+        	    //ctx.fillRect(0,102,612,408);
+
+        	    var txt = ' 00/16 ';
+        	    ctx.font = '50px Impact';
+        	    ctx.textAlign= 'left';
+        	    ctx.textBaseline='middle';
+
+        	    ctx.fillStyle = 'white';
+        	    var width = ctx.measureText(txt).width;
+        	    ctx.fillRect(612-width, 480, width, 50);
+
+
+        	    ctx.fillStyle="black";
+
+      			ctx.fillText( txt, 612-width, 510);
+        	}
+
+        	var img = c.toDataURL("image/png");
+        	document.write('<img src="'+img+'"/>');
+     
+    	</script>
+    </body>
+     
+</html>
