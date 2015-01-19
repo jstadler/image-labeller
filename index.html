@@ -14,63 +14,86 @@
     </head>
      
     <body>
-    	<div style="float:left;">
-	    <canvas id="canvasuses" width="612" height="612" style="border:solid 1px black;">
-    		<p>Your browser does not support the HTML5 canvas element.</p>
-    	</canvas>
-    	</div>
-
-    	<div style="float:left;">
-    	<button>Upload Image</button><br /><br />
-    	<input></input><br /><br />
-    	<button>Save</button>
-    	</div>
-
+        <div style="width:612px; margin: auto;">
+	       <canvas id="canvas" width="612" height="612" style="border:solid 1px black;">
+    		  <p>Your browser does not support the HTML5 canvas element.</p>
+    	   </canvas>
+        </div>
+        <div style="width:612px; margin: auto;">
+            Select Image: <input type="file" id="input">
+            <span style="float:right;">Portrait: <input type="checkbox" id="portToggle" onclick="toggleVal(this)"></span><br />
+            <input type="text" id="label">
+            <input type="button" onclick="addText()" value="Add Label"><br />
+            <input type="button" id="saveImage" onclick="addText()" value="Save Image" style="float:right;">
+        </div>
     	<script type="text/javascript">
-        	 
-        	var c=document.getElementById("canvasuses");
-        	var canvOK=1;
-        	try {c.getContext("2d");}
-        	catch (er) {canvOK=0;}
+            var URL = window.webkitURL || window.URL;
+            var ctx = document.getElementById('canvas').getContext('2d');
+            var img;
 
-        	if (canvOK==1){
-        		// main image
-        		// top padding 102
-        		// rect 612x408
-        		// bottom padding 102
-        	    var ctx=c.getContext("2d");
+            // portrait?
+            var port = 0;
 
-        	    // backround
-        	    ctx.fillStyle = 'white';
-				ctx.fillRect(0, 0, 612, 612);
+            function toggleVal(checkbox){
+                if (checkbox.checked){
+                    port = 1;
+                }else{
+                    port = 0;
+                }
+                addText();
+            }
 
-        	    var imageObj = new Image();
-        	    imageObj.src = 'img/0016.jpg';
+            // 0 = landscape
+            // 1 = portrait
+            var imageLoc = [[0,102,612,408],[102,0,408,612]];
+            var labelHeight = [510,585];
 
-        		ctx.drawImage(imageObj, 0, 102, 612, 408);
-      			
-      			
-        	    //ctx.fillStyle="red";
-        	    //ctx.fillRect(0,102,612,408);
-
-        	    var txt = ' 00/16 ';
-        	    ctx.font = '50px Impact';
-        	    ctx.textAlign= 'left';
-        	    ctx.textBaseline='middle';
-
-        	    ctx.fillStyle = 'white';
-        	    var width = ctx.measureText(txt).width;
-        	    ctx.fillRect(612-width, 480, width, 50);
-
-
-        	    ctx.fillStyle="black";
-
-      			ctx.fillText( txt, 612-width, 510);
-        	}
-
-        	var img = c.toDataURL("image/png");
-        	document.write('<img src="'+img+'"/>');
-     
+            function clearCanvas() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0,0,612,612);
+            }
+            window.onload = function() {
+                var input = document.getElementById('input');
+                input.addEventListener('change', handleFiles, false);
+            }
+            function handleFiles(e) {
+                clearCanvas();
+                var url = URL.createObjectURL(e.target.files[0]);
+                img = new Image();
+                img.onload = function() {
+                    ctx.drawImage(img, 
+                        imageLoc[port][0],
+                        imageLoc[port][1],
+                        imageLoc[port][2],
+                        imageLoc[port][3] 
+                    );    
+                }
+                img.src = url;
+            }
+            function addText() {
+                clearCanvas();
+                ctx.drawImage(img, 
+                    imageLoc[port][0],
+                    imageLoc[port][1],
+                    imageLoc[port][2],
+                    imageLoc[port][3] 
+                );
+                var str = document.getElementById('label').value;
+                    if(str != ''){
+                    var txt = ' ' + str + ' ';
+                    ctx.font = '50px Impact';
+                    ctx.textAlign= 'left';
+                    ctx.textBaseline='middle';
+                    // bg of label
+                    ctx.fillStyle = 'white';
+                    var width = ctx.measureText(txt).width;
+                    ctx.fillRect(canvas.width-width, labelHeight[port]-30, width, 50    );
+                    // label
+                    ctx.fillStyle="black";
+                    ctx.fillText( txt, canvas.width-width, labelHeight[port]);
+                }
+            }
     	</script>
     </body>
      
